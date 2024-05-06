@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graph</title>
+  <style>
+    canvas {
+      max-width: 600px;
+      max-height: 400px;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <button id="up-button">Up</button>
+    <button id="down-button">Down</button>
+    <div id="profit-loss"></div>
+  </div>
+  <canvas id="chart"></canvas>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('chart').getContext('2d');
+    let initialDataPoint = 100;
+    let previousDataPoint = initialDataPoint;
+    let profitLoss = 0;
+
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [0],
+        datasets: [{
+          label: 'Asset Price',
+          data: [initialDataPoint],
+          borderColor: 'rgba(75, 192, 192, 1)',
+          fill: false
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            type: 'linear',
+            position: 'bottom'
+          }
+        }
+      }
+    });
+
+    const handleUpButtonClick = () => {
+      const newDataPoint = previousDataPoint + Math.random() * 2 - 1;
+      const color = newDataPoint > previousDataPoint? 'green' : 'red';
+      profitLoss += newDataPoint - previousDataPoint;
+      previousDataPoint = newDataPoint;
+
+      chart.data.labels.push(chart.data.labels.length);
+      chart.data.datasets[0].data.push(newDataPoint);
+      chart.data.datasets[0].borderColor = color;
+      chart.update();
+
+      document.getElementById('profit-loss').textContent = `Profit/Loss: ${profitLoss}`;
+    };
+
+    const handleDownButtonClick = () => {
+      const newDataPoint = previousDataPoint - Math.random() * 2 + 1;
+      const color = newDataPoint < previousDataPoint? 'green' : 'red';
+      profitLoss += newDataPoint - previousDataPoint;
+      previousDataPoint = newDataPoint;
+
+      chart.data.labels.push(chart.data.labels.length);
+      chart.data.datasets[0].data.push(newDataPoint);
+      chart.data.datasets[0].borderColor = color;
+      chart.update();
+
+      document.getElementById('profit-loss').textContent = `Profit/Loss: ${profitLoss}`;
+    };
+
+    document.getElementById('up-button').addEventListener('click', handleUpButtonClick);
+    document.getElementById('down-button').addEventListener('click', handleDownButtonClick);
+  </script>
+</body>
+</html>
+
